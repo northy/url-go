@@ -20,6 +20,7 @@ def index():
         remaining = int(current_app.config['LIMIT_COUNT'])-user.urls_created
     else :
         remaining = 0
+    db.session.commit()
     return render_template('index.html', limited=current_app.config['LIMIT_SHORTENS'], remaining=remaining)
 
 @go.route('/<short_url>')
