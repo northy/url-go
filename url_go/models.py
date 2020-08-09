@@ -10,6 +10,8 @@ class Url(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     full_url = db.Column(db.String(256))
+    stats_id = db.Column(db.String(16))
+    stats_secret = db.Column(db.String(256))
     visits = db.Column(db.Integer, default=0)
     date_created = db.Column(db.DateTime, default=datetime.now)
     creator_ip = db.Column(db.String(15), db.ForeignKey('users.ip'))

@@ -14,11 +14,29 @@
     <section class="section">
         <h1 class="title is-4">Stats</h1>
         <div class="container">
+            <form method="POST" action="{{ url_for('go.stats_sendsecret') }}">
+                <label class="label">Stats ID and Secret (for information retrieving)</label>
+                <div class="field has-addons">
+                    <div class="control is-expanded">
+                        <input class="input" type="text" placeholder="Stats ID" name="stats_id" required>
+                    </div>
+                    <div class="control is-expanded">
+                        <input class="input rm-4" type="password" placeholder="Stats secret" name="stats_secret" required>
+                    </div>
+                </div>
+                <div class="control">
+                    <input type="submit" class="button is-info">
+                </div>
+            </form>
+            {% if links %}
+            <br>
+            <h1 class="title is-4 is-spaced">Urls for id "{{ links[0].stats_id }}"</h1>
             <table class="table">
                 <thead>
                     <tr>
                         <th>Original URL</th>
                         <th>Short URL</th>
+                        <th>Date Created</th>
                         <th>Visits</th>
                     </tr>
                 </thead>
@@ -26,6 +44,7 @@
                     <tr>
                         <th>Original URL</th>
                         <th>Short URL</th>
+                        <th>Date Created</th>
                         <th>Visits</th>
                     </tr>
                 </tfoot>
@@ -34,11 +53,13 @@
                     <tr>
                         <td><a href="{{ link.full_url }}">{{ link.full_url }}</a></td>
                         <td><a href="{{ url_for('go.redirect_to_url', short_url=link.generate_short_code(), _external=True) }}">{{ url_for('go.redirect_to_url', short_url=link.generate_short_code(), _external=True) }}</a></td>
+                        <td>{{ link.date_created.strftime("%b %d-%Y %H:%M") }}</td>
                         <td>{{ link.visits }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
+            {% endif %}
         </div>
     </section>
 </body>

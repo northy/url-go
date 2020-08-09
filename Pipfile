@@ -11,6 +11,7 @@ flask-sqlalchemy = "*"
 python-dotenv = "*"
 validators = "*"
 requests = "*"
+passlib = "*"
 
 [requires]
 python_version = "3.8"

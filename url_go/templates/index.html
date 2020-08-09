@@ -21,16 +21,27 @@
                 <div class="field">
                     <label class="label">Original URL</label>
                     <div class="control">
-                        <input class="input" type="text" name="full_url">
+                        <input class="input" type="text" placeholder="Full URL" name="full_url" required>
+                    </div>
+                </div>
+                <label class="label">Stats ID and Secret (for information retrieving)</label>
+                <div class="field has-addons">
+                    <div class="control is-expanded">
+                        <input class="input" type="text" placeholder="Stats ID" name="stats_id">
+                    </div>
+                    <div class="control is-expanded">
+                        <input class="input rm-4" type="password" placeholder="Stats secret" name="stats_secret">
+                    </div>
                 </div>
 
                 <br>
                 
                 {% if config['HCAPTCHA_ENABLED'] %}
-                <div class="h-captcha" data-sitekey="{{ config['HCAPTCHA_SITE_KEY'] }}"></div>
+                <div class="control">
+                    <div class="h-captcha" data-sitekey="{{ config['HCAPTCHA_SITE_KEY'] }}"></div>
+                </div>
                 {% endif %}
                 
-                </div>
                 <div class="control">
                     <button type="submit" class="button is-info">Shorten</button>
                 </div>

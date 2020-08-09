@@ -1,10 +1,11 @@
-from flask import Blueprint, render_template, request, redirect, current_app, url_for
+from flask import Blueprint, render_template, request, redirect, current_app, url_for, make_response
 
 from .extensions import db, verify_hcaptcha, decode
 from .models import Url, User
 
 import validators
 import json
+from passlib.hash import sha256_crypt
 
 go = Blueprint('go', __name__)
 
@@ -61,19 +62,38 @@ def new():
     if current_app.config['LIMIT_SHORTENS'] and user.urls_created>=int(current_app.config['LIMIT_COUNT']) :
         return render_template('error.html',error="You have exceeded your shortens limit"), 400
     
-    url = Url(full_url=full_url,creator_ip=ip)
+    stats_id = request.form['stats_id']
+    stats_secret = sha256_crypt.encrypt(request.form['stats_secret'])
+    if stats_id == '' or request.form['stats_secret'] == '' : stats_id = None; stats_secret = None
+
+    url = Url(full_url=full_url,creator_ip=ip,stats_id=stats_id,stats_secret=stats_secret)
     user.urls_created+=1
     db.session.add(url)
     db.session.commit()
-        
+    
     return render_template('link_added.html', new_url=url.generate_short_code(), full_url=url.full_url)
 
 @go.route('/stats')
 def stats():
     ip=request.environ['REMOTE_ADDR']
-    links = Url.query.filter_by(creator_ip=ip)
-
+    links = None
+    if 'stats_id' and 'stats_secret' in request.cookies.keys() :
+        links = Url.query.filter_by(stats_id=request.cookies.get('stats_id'))
+        i=0
+        links = links.all()
+        while i<len(links) :
+            if not sha256_crypt.verify(request.cookies.get('stats_secret'),links[i].stats_secret) : del links[i]
+            else : i+=1
+    
     return render_template('stats.html', links=links)
+
+@go.route('/stats', methods=['POST'])
+def stats_sendsecret():
+    resp = make_response(redirect('stats'))
+    resp.set_cookie('stats_id', request.form['stats_id'])
+    resp.set_cookie('stats_secret', request.form['stats_secret'])
+
+    return resp
 
 @go.errorhandler(404)
 def page_not_found(e):
