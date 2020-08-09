@@ -1,0 +1,3 @@
+FLASK_APP=url_go
+FLASK_ENV=production
+FLASK_RUN_PORT=5001

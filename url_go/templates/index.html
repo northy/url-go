@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ config['SERVER_NAME'] }} url go!</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script src="https://hcaptcha.com/1/api.js" async defer></script>
+</head>
+
+<body>
+    <section class="section">
+        <h1 class="title is-4 is-spaced bd-anchor-title">{{ config['SERVER_NAME'] }} url go!</h1>
+        <div class="container">
+            <form method="POST" action="{{ url_for('go.new') }}">
+                <div class="field">
+                    <label class="label">Original URL</label>
+                    <div class="control">
+                        <input class="input" type="text" name="full_url">
+                </div>
+
+                <br>
+                
+                <div class="h-captcha" data-sitekey="{{ config['HCAPTCHA_SITE_KEY'] }}"></div>
+                
+                </div>
+                <div class="control">
+                    <button type="submit" class="button is-info">Shorten</button>
+                </div>
+            </form>
+        </div>
+    <br />
+    {% if limited %}
+    <h1>You can still shorten {{ remaining }} urls</h1>
+    <br />
+    {% endif %}
+    <h1 class="title is-4 is-spaced">See your stats</h1>
+    <button class="button is-info" onClick="window.location.href = '{{ url_for('go.stats') }}'">Stats</button>
+    </section>
+</body>
+
+</html>
