@@ -38,6 +38,7 @@
                         <th>Short URL</th>
                         <th>Date Created</th>
                         <th>Visits</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tfoot>
@@ -46,6 +47,7 @@
                         <th>Short URL</th>
                         <th>Date Created</th>
                         <th>Visits</th>
+                        <th></th>
                     </tr>
                 </tfoot>
                 <tbody>
@@ -55,6 +57,7 @@
                         <td><a href="{{ url_for('go.redirect_to_url', short_url=link.generate_short_code(), _external=True) }}">{{ url_for('go.redirect_to_url', short_url=link.generate_short_code(), _external=True) }}</a></td>
                         <td>{{ link.date_created.strftime("%b %d-%Y %H:%M") }}</td>
                         <td>{{ link.visits }}</td>
+                        <td><a href="{{ url_for('go.delete_url')+'?id='+link.id|string }}"><i class="fas fa-home">trash-alt</i></a></td>
                     </tr>
                     {% endfor %}
                 </tbody>

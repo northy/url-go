@@ -77,7 +77,7 @@ def new():
 def stats():
     ip=request.environ['REMOTE_ADDR']
     links = None
-    if 'stats_id' and 'stats_secret' in request.cookies.keys() :
+    if 'stats_id' in request.cookies.keys() and 'stats_secret' in request.cookies.keys() :
         links = Url.query.filter_by(stats_id=request.cookies.get('stats_id'))
         i=0
         links = links.all()
@@ -94,6 +94,22 @@ def stats_sendsecret():
     resp.set_cookie('stats_secret', request.form['stats_secret'])
 
     return resp
+
+@go.route('/delete', methods=['GET'])
+def delete_url() :
+    if not('stats_id' in request.cookies.keys() and 'stats_secret' in request.cookies.keys()) :
+        return render_template('404.html'), 404
+    
+    url = Url.query.filter_by(id=request.args['id']).first_or_404()
+    if request.cookies.get('stats_id')!=url.stats_id or not sha256_crypt.verify(request.cookies.get('stats_secret'),url.stats_secret) :
+        return render_template('404.html'), 404
+    
+    db.session.delete(url)
+    db.session.commit()
+
+    return redirect('stats')
+    
+    
 
 @go.errorhandler(404)
 def page_not_found(e):
