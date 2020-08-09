@@ -15,6 +15,9 @@ def index():
     if not user :
         user = User(ip=ip)
         db.session.add(user)
+        user.urls_created = 0
+        db.session.commit()
+
     remaining = int(current_app.config['LIMIT_COUNT'])-user.urls_created
     return render_template('index.html', limited=current_app.config['LIMIT_SHORTENS'], remaining=remaining)
 
@@ -43,12 +46,20 @@ def new():
     full_url = request.form['full_url']
     if not validators.url(full_url) :
         return render_template('error.html',error="Invalid URL"), 400
+    
     ip=request.environ['REMOTE_ADDR']
     print(ip,"Shortened an URL!")
+
     user = User.query.filter_by(ip=ip).first()
     if not user :
         user = User(ip=ip)
         db.session.add(user)
+        user.urls_created = 0
+        db.session.commit()
+    
+    if user.urls_created>=int(current_app.config['LIMIT_COUNT']) :
+        return render_template('error.html',error="You have exceeded your shortens limit"), 400
+    
     url = Url(full_url=full_url,creator_ip=ip)
     user.urls_created+=1
     db.session.add(url)
