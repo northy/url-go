@@ -8,7 +8,8 @@
         <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     </head>
     <body>
-    <h1 class="title is-4 is-spaced bd-anchor-title">{{ config['SERVER_NAME'] }} url go!</h1>
+    <a href="{{ url_for('go.index') }}"><h1 class="title is-4 is-spaced bd-anchor-title">{{ config['SERVER_NAME'] }} url go!</h1></a>
+    <br />
     <section class="section">
         <div class="container">
         <div class="field">
