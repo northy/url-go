@@ -7,7 +7,9 @@
     <title>{{ config['SERVER_NAME'] }} url go!</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    {% if config['HCAPTCHA_ENABLED'] %}
     <script src="https://hcaptcha.com/1/api.js" async defer></script>
+    {% endif %}
 </head>
 
 <body>
@@ -23,7 +25,9 @@
 
                 <br>
                 
+                {% if config['HCAPTCHA_ENABLED'] %}
                 <div class="h-captcha" data-sitekey="{{ config['HCAPTCHA_SITE_KEY'] }}"></div>
+                {% endif %}
                 
                 </div>
                 <div class="control">
