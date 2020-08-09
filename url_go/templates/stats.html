@@ -33,7 +33,7 @@
                     {% for link in links %}
                     <tr>
                         <td><a href="{{ link.full_url }}">{{ link.full_url }}</a></td>
-                        <td><a href="{{ url_for('go.redirect_to_url', short_url=link.short_url, _external=True) }}">{{ url_for('go.redirect_to_url', short_url=link.short_url, _external=True) }}</a></td>
+                        <td><a href="{{ url_for('go.redirect_to_url', short_url=link.generate_short_code(), _external=True) }}">{{ url_for('go.redirect_to_url', short_url=link.generate_short_code(), _external=True) }}</a></td>
                         <td>{{ link.visits }}</td>
                     </tr>
                     {% endfor %}

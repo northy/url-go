@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, current_app, url_for
 
-from .extensions import db, verify_hcaptcha
+from .extensions import db, verify_hcaptcha, decode
 from .models import Url, User
 
 import validators
@@ -10,20 +10,21 @@ go = Blueprint('go', __name__)
 
 @go.route('/')
 def index():
-    ip=request.environ['REMOTE_ADDR']
-    user = User.query.filter_by(ip=ip).first()
-    if not user :
-        user = User(ip=ip)
-        db.session.add(user)
-        user.urls_created = 0
-        db.session.commit()
-
-    remaining = int(current_app.config['LIMIT_COUNT'])-user.urls_created
+    if current_app.config['LIMIT_SHORTENS'] :
+        ip=request.environ['REMOTE_ADDR']
+        user = User.query.filter_by(ip=ip).first()
+        if not user :
+            user = User(ip=ip)
+            db.session.add(user)
+            db.session.flush()
+        remaining = int(current_app.config['LIMIT_COUNT'])-user.urls_created
+    else :
+        remaining = 0
     return render_template('index.html', limited=current_app.config['LIMIT_SHORTENS'], remaining=remaining)
 
 @go.route('/<short_url>')
 def redirect_to_url(short_url):
-    link = Url.query.filter_by(short_url=short_url).first_or_404()
+    link = Url.query.filter_by(id=decode(short_url,int(current_app.config['URL_OFFSET']),current_app.config['URL_ALPHABET'])).first_or_404()
 
     link.visits = link.visits + 1
     db.session.commit()
@@ -54,10 +55,9 @@ def new():
     if not user :
         user = User(ip=ip)
         db.session.add(user)
-        user.urls_created = 0
-        db.session.commit()
+        db.session.flush()
     
-    if user.urls_created>=int(current_app.config['LIMIT_COUNT']) :
+    if current_app.config['LIMIT_SHORTENS'] and user.urls_created>=int(current_app.config['LIMIT_COUNT']) :
         return render_template('error.html',error="You have exceeded your shortens limit"), 400
     
     url = Url(full_url=full_url,creator_ip=ip)
@@ -65,7 +65,7 @@ def new():
     db.session.add(url)
     db.session.commit()
         
-    return render_template('link_added.html', new_url=url.short_url, full_url=url.full_url)
+    return render_template('link_added.html', new_url=url.generate_short_code(), full_url=url.full_url)
 
 @go.route('/stats')
 def stats():

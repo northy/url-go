@@ -10,6 +10,10 @@ def create_app(config_file='settings.py'):
 
     app.config.from_pyfile(config_file)
 
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    print("Starting database...")
+
     db.init_app(app)
 
     app.register_blueprint(go)
