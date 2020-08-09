@@ -14,4 +14,7 @@ def create_app(config_file='settings.py'):
 
     app.register_blueprint(go)
 
+    if (app.config['HCAPTCHA_ENABLED']) :
+        print("Enabling hCaptcha...")
+
     return app
