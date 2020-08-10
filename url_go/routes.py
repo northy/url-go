@@ -79,9 +79,8 @@ def new():
         resp.set_cookie('stats_id', request.form['stats_id'])
         resp.set_cookie('stats_secret', request.form['stats_secret'])
         return resp
-    
-    else :
-        return render_template('link_added.html', stats_id=stats_id, new_url=url.generate_short_code(), full_url=url.full_url)
+
+    return render_template('link_added.html', stats_id=stats_id, new_url=url.generate_short_code(), full_url=url.full_url)
 
 @go.route('/stats')
 def stats():
@@ -118,9 +117,11 @@ def delete_url() :
     db.session.commit()
 
     return redirect('stats')
-    
-    
 
 @go.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
+
+@go.route('/favicon.ico')
+def favicon():
+    return current_app.send_static_file('favicon.ico')
