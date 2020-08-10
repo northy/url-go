@@ -29,7 +29,18 @@
             </a>
             </div>
         </div>
+        {% if stats_id is not none %}
+        <div class="field">
+            <label class="label">Stats id</label>
+            <div class="control">
+                <input class="input" type="text" name="original_url" value="{{ stats_id }}" readonly>
+            </div>
         </div>
+        <br />
+        <label class="label">Go to stats page</label>
+        <button class="button is-info" onClick="window.location.href = '{{ url_for('go.stats') }}'">Stats</button>
+        </div>
+        {% endif %}
     </section>
     <script>
         function copy() {

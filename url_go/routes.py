@@ -73,8 +73,15 @@ def new():
     user.urls_created+=1
     db.session.add(url)
     db.session.commit()
+
+    if stats_id is not None :
+        resp = make_response(render_template('link_added.html', stats_id=stats_id, new_url=url.generate_short_code(), full_url=url.full_url))
+        resp.set_cookie('stats_id', request.form['stats_id'])
+        resp.set_cookie('stats_secret', request.form['stats_secret'])
+        return resp
     
-    return render_template('link_added.html', new_url=url.generate_short_code(), full_url=url.full_url)
+    else :
+        return render_template('link_added.html', stats_id=stats_id, new_url=url.generate_short_code(), full_url=url.full_url)
 
 @go.route('/stats')
 def stats():
