@@ -7,6 +7,14 @@ def verify_hcaptcha(secret,response,remoteip) :
     r = requests.post("https://hcaptcha.com/siteverify",params=params)
     return r.json()['success']
 
+def check_url(url) :
+    prepared_request = requests.models.PreparedRequest()
+    try:
+        prepared_request.prepare_url(url, None)
+        return prepared_request.url,True
+    except :
+        return '',False
+
 def encode(numeric_id, offset, minimumLength, urlAlphabet) :
     base = len(urlAlphabet)
     numeric_id+=offset

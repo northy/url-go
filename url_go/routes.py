@@ -1,9 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, current_app, url_for, make_response
 
-from .extensions import db, verify_hcaptcha, decode
+from .extensions import db, verify_hcaptcha, decode, check_url
 from .models import Url, User
 
-import validators
 import json
 from passlib.hash import sha256_crypt
 
@@ -46,8 +45,12 @@ def refresh() :
 def new():
     if current_app.config['HCAPTCHA_ENABLED'] and not verify_hcaptcha(current_app.config['HCAPTCHA_SECRET_KEY'],request.form['h-captcha-response'],request.environ['REMOTE_ADDR']) :
         return render_template('error.html',error="Captcha could not be verified"), 400
+    
     full_url = request.form['full_url']
-    if not validators.url(full_url) :
+    if not full_url.startswith('http') : full_url = "http://"+full_url
+    full_url,valid = check_url(full_url)
+    
+    if not valid :
         return render_template('error.html',error="Invalid URL"), 400
     
     ip=request.environ['REMOTE_ADDR']
