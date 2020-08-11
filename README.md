@@ -2,6 +2,8 @@
 
 URL Go is a simple python3 flask application designed to provide an open source url shortener service.
 
+You can check for a live demo of URL Go on [go.northy.xyz](https://go.northy.xyz)
+
 ## How to install
 
 To install URL Go , you need to:
