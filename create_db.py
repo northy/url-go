@@ -4,4 +4,12 @@ from url_go.models import User, Url
 
 print("Creating Database...")
 
-db.create_all(app=create_app())
+app = create_app()
+
+try:
+    db.create_all(app=app)
+except Exception as e :
+    print("Error creating database:", e)
+    exit(1)
+
+print("Done!")

@@ -6,6 +6,8 @@ from .models import Url, User
 import json
 from passlib.hash import sha256_crypt
 
+urls_to_skip=['index','refresh','new','stats','delete']
+
 go = Blueprint('go', __name__)
 
 @go.route('/')
@@ -72,6 +74,16 @@ def new():
     url = Url(full_url=full_url,creator_ip=ip,stats_id=stats_id,stats_secret=stats_secret)
     user.urls_created+=1
     db.session.add(url)
+    db.session.flush()
+
+    if url.generate_short_code() in urls_to_skip :
+        url.creator_ip=''
+        url.full_url=''
+        url.stats_id=''
+        url.stats_secret=''
+        url = Url(full_url=full_url,creator_ip=ip,stats_id=stats_id,stats_secret=stats_secret)
+        db.session.add(url)
+
     db.session.commit()
 
     if stats_id is not None :
